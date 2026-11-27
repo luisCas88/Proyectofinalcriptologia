@@ -1,0 +1,29 @@
+
+=== PASO 1: Registro. Las claves se generan en el CLIENTE; al servidor solo viaja la parte pública ===
+  servidor guarda -> usuario=alice | hash Argon2id de 32 bytes (no la contraseña) | IK_sig_pub=SGLpE3P-SqTt5HDm... | firma SPK=wk5Lc9X3cK05W5FH...
+  servidor guarda -> usuario=bob | hash Argon2id de 32 bytes (no la contraseña) | IK_sig_pub=xGhyicDY4Fj_rNqX... | firma SPK=Ee2jJg2WSO8Um3WD...
+  claves privadas: solo en el almacén local cifrado de cada cliente (Argon2id + AES-256-GCM)
+
+=== PASO 2: Autenticación. Argon2id en el servidor y token de sesión aleatorio de 256 bits ===
+  token de Alice (longitud) = 43 caracteres; el servidor guarda solo su SHA-256
+
+=== PASO 3: Alice escribe a Bob mientras Bob está desconectado (X3DH + AES-256-GCM) ===
+  lo único que el servidor tiene del mensaje #0 -> t-5EoN0CTL40TL-xAbSUJUnuhXUKCcp0840zeIBI8oWaaRh8ADw08ncbQhuv...
+  el texto en claro NO está en el servidor
+
+=== PASO 4: Bob se conecta, verifica la firma del bundle de Alice, deriva la misma clave y descifra ===
+  Bob recibió de alice #0: 'Hola Bob, este mensaje viaja cifrado de extremo a extremo'
+
+=== PASO 5: Bob responde y Alice descifra (ratchet: clave nueva por mensaje) ===
+  Alice recibió de bob #0: 'Recibido, Alice'
+
+=== PASO 6: Verificación de identidad: safety number idéntico en ambos lados ===
+  Alice ve: 01920 64812 71053 45566 01964 12466 13071 98375 26641 61683 90372 57880
+  Bob ve  : 01920 64812 71053 45566 01964 12466 13071 98375 26641 61683 90372 57880
+  coinciden: True
+  Alice marca a Bob como verificado: True
+
+=== PASO 7: Un byte alterado en el servidor se rechaza (falla la etiqueta de AES-GCM) ===
+  resultado en Bob: rechazado -> InvalidTag
+
+RESULTADO DE LA DEMOSTRACIÓN: FLUJO E2E CORRECTO

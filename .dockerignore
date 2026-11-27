@@ -1,0 +1,23 @@
+# Nunca meter secretos, datos locales ni historial Git en la imagen
+.git
+.gitignore
+.dockerignore
+.env
+*.enc
+*.pem
+*.key
+*.db
+*.sqlite3
+data/*
+!data/.gitkeep
+.securechat/
+.claude/
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+# Evidencias generadas
+attacks/evidence/*.log
+docs/evidencias/

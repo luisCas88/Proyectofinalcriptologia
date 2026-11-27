@@ -1,0 +1,49 @@
+# Uso rápido:
+#   docker compose up -d server                                  # servidor en http://localhost:8000
+#   docker compose run --rm client --user alice register         # cliente interactivo
+#   docker compose --profile tests run --rm tests                # pruebas
+#   docker compose --profile attacks run --rm attacks            # ataques (evidencia en attacks/evidence/)
+#   docker compose down -v                                       # parar y borrar volúmenes
+
+x-app: &app
+  build: .
+  image: securechat:latest
+
+services:
+  server:
+    <<: *app
+    ports: ["8000:8000"]
+    volumes:
+      - server-data:/app/data
+    restart: unless-stopped
+
+  client:
+    <<: *app
+    profiles: ["client"]
+    entrypoint: ["python", "-m", "securechat.client"]
+    environment:
+      SECURECHAT_SERVER: http://server:8000
+    volumes:
+      - client-home:/home/app/.securechat
+    stdin_open: true
+    tty: true
+    depends_on:
+      server:
+        condition: service_healthy
+
+  tests:
+    <<: *app
+    profiles: ["tests"]
+    command: ["python", "-m", "pytest", "tests", "-q", "-p", "no:cacheprovider"]
+
+  attacks:
+    <<: *app
+    profiles: ["attacks"]
+    user: root   # solo el runner de laboratorio: escribe la evidencia en el bind mount
+    command: ["python", "attacks/run_all.py"]
+    volumes:
+      - ./attacks/evidence:/app/attacks/evidence
+
+volumes:
+  server-data:
+  client-home:
