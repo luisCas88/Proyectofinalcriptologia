@@ -23,6 +23,7 @@ python -m securechat.client --user bob register           # terminal 3
 python -m securechat.client --user alice send bob "hola"
 python -m securechat.client --user bob inbox
 python -m securechat.client --user bob safety alice       # compare este número con el de Alice
+python -m securechat.client --user bob                    # sin comando: abre el menú interactivo
 ```
 
 ## Ejecutar con Docker
