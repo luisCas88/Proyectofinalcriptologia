@@ -1,0 +1,18 @@
+# Secretos y datos locales: NUNCA al repositorio (un solo commit con un secreto baja C8 a insuficiente)
+.env
+*.enc
+*.pem
+*.key
+*.db
+*.sqlite3
+data/*
+!data/.gitkeep
+.securechat/
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+# Evidencias generadas (se regeneran con: python attacks/run_all.py)
+attacks/evidence/*.log
